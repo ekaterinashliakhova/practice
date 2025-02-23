@@ -7,3 +7,5 @@ make
 make test
 
 ./test_fibonacci
+
+make package
