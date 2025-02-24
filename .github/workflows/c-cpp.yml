@@ -1,10 +1,10 @@
-name: CI-C++
+name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ practice_2 ]
   pull_request:
-    branches: [ master ]
+    branches: [ practice_2 ]
 
 jobs:
   build:
