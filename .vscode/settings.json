@@ -1,5 +1,3 @@
 {
-    "files.associations": {
-        "stdexcept": "cpp"
-    }
+    "makefile.configureOnOpen": false
 }
