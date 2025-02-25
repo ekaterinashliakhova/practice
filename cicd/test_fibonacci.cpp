@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "fibonacci.h"
+#include "../src/fibonacci.h"
 
 TEST(FibonacciTest, HandlesZeroInput) {
     EXPECT_EQ(fibonacci(0), 0);

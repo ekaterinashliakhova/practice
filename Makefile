@@ -1,38 +1,43 @@
 TARGET = fibonacci
-TEST_TARGET = test_fibonacci
-PACKAGE_NAME = fibonacci_package
+TARGET_TEST = test_fibonacci
+
+HEADER = usr/
 
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++14 
+CXXFLAGS = -Wall -Wextra -std=c++17 -I $(HEADER)
+LIBS_TEST = -lgtest -lgtest_main -pthread
 
-SRCS = fibonacci.cpp
-TEST_SRCS = test_fibonacci.cpp
-MAIN_SRCS = main.cpp
+USR_DIR = usr/
+SRC_DIR = src/
+CICD_DIR = cicd/
 
-OBJS = $(SRCS:.cpp=.o)
-TEST_OBJS = $(TEST_SRCS:.cpp=.o)
-MAIN_OBJS = $(MAIN_SRCS:.cpp=.o)
+SRCS_SRC = $(wildcard $(SRC_DIR)*.cpp) #включает main.cpp
+OBJS_SRC = $(patsubst $(SRC_DIR)%.cpp, $(USR_DIR)%.o, $(SRCS_SRC))
 
-all: $(TARGET)
+SRCS_TEST = $(wildcard $(CICD_DIR)*.cpp)
+OBJS_TEST = $(patsubst $(CICD_DIR)%.cpp, $(USR_DIR)%.o, $(SRCS_TEST))
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+all: $(TARGET) $(TARGET_TEST)
 
-%.o: %.cpp
+$(TARGET): $(OBJS_SRC)
+	$(CXX) $(OBJS_SRC) -o $(USR_DIR)$(TARGET)
+
+$(USR_DIR)%.o: $(SRC_DIR)%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: $(TEST_TARGET)
+test: $(TARGET_TEST)
 
-$(TEST_TARGET): $(OBJS) $(TEST_SRCS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(TEST_SRCS) -lgtest -lgtest_main -pthread
+$(TARGET_TEST): $(OBJS_TEST)
+	$(CXX) $(OBJS_TEST) $(USR_DIR)$(TARGET).o -o $(USR_DIR)$(TARGET_TEST) $(LIBS_TEST)
+
+$(USR_DIR)%.o: $(CICD_DIR)%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+package:
+	dpkg-deb --build .
+	mv ..deb $(TARGET).deb
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_OBJS) $(TEST_TARGET) $(PACKAGE_NAME).tar.gz
-
-package: clean
-	mkdir -p $(PACKAGE_NAME)
-	cp $(SRCS) $(TEST_SRCS) $(MAIN_SRCS) fibonacci.h Makefile run_tests.sh $(PACKAGE_NAME)/
-	tar -czvf $(PACKAGE_NAME).tar.gz $(PACKAGE_NAME)
-	rm -rf $(PACKAGE_NAME)
+	rm $(USR_DIR)*.o $(USR_DIR)$(TARGET) $(TARGET).deb
 
 .PHONY: all clean test package

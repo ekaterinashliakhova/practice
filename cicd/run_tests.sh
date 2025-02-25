@@ -6,6 +6,6 @@ make
 
 make test
 
-./test_fibonacci
+usr/test_fibonacci
 
 make package
