@@ -2,15 +2,24 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ practice_2 ]
+    branches: [ "practice_2" ]
   pull_request:
-    branches: [ practice_2 ]
+    branches: [ "practice_2" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-    - name: checkout repo
-      uses: actions/checkout@v1.0
-    - name: build application
+    - uses: ekaterinashliakhova/practice@practice_2
+    - name: make all
       run: make all
+    - name: make test
+      run: make test
+    - name: run test
+      run: ./cicd/run_tests.sh
+    - name: make package
+      run: make package
+    - name: make clean
+      run: make clean
