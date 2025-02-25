@@ -1,7 +1,6 @@
 name: Build and Test
 
 on:
-  # Триггеры для запуска воркфлоу
   push:
     branches: [practice_2]
   pull_request:
@@ -14,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2  # Указываем ветку practice_2
+          ref: practice_2
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev libgtest-dev
@@ -32,7 +31,6 @@ jobs:
         run: |
           make package
 
-      # Дополнительный шаг для публикации артефакта (.deb)
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
