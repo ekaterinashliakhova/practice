@@ -25,12 +25,13 @@ jobs:
           make
 
       - name: Run tests
-        run: ./cicd/run_tests.sh
+        run: |
+          make test
+          ./usr/test_fibonacci
 
       - name: Create .deb package
         run: |
-          cd ..
-          dpkg-deb --build .
+          make package
 
       # Дополнительный шаг для публикации артефакта (.deb)
       - name: Upload artifact
