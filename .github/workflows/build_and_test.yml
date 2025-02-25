@@ -20,8 +20,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev
 
       - name: Build project
-        run: |
-          ./make
+        run: ls
 
       - name: Run tests
         run: ./cicd/run_tests.sh
