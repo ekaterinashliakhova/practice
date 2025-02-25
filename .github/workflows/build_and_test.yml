@@ -1,0 +1,39 @@
+name: Build and Test
+
+on:
+  # Триггеры для запуска воркфлоу
+  push:
+    branches: [practice_2]
+  pull_request:
+    branches: [practice_2]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_2  # Указываем ветку practice_2
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev
+
+      - name: Build project
+        run: |
+          ./make
+
+      - name: Run tests
+        run: ./cicd/run_tests.sh
+
+      - name: Create .deb package
+        run: |
+          cd ..
+          dpkg-deb --build .
+
+      # Дополнительный шаг для публикации артефакта (.deb)
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: fibonacci_deb_package
+          path: fibonacci.deb
