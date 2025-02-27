@@ -3,9 +3,9 @@ name: Build and Test
 on:
   # Триггеры для запуска воркфлоу
   push:
-    branches: [practice_2]
+    branches: [practice_3]
   pull_request:
-    branches: [practice_2]
+    branches: [practice_3]
 
 jobs:
   build-and-test:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2  # Указываем ветку practice_2
+          ref: practice_3
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev libgtest-dev
@@ -32,9 +32,31 @@ jobs:
         run: |
           make package
 
-      # Дополнительный шаг для публикации артефакта (.deb)
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: fibonacci_deb_package
           path: fibonacci.deb
+
+  deploy:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t fibonacci-app .
+
+      - name: Run Docker container
+        env:
+          DEB_PACKAGE: fibonacci.deb
+          INPUT_PARAM: 10  
+        run: |
+          docker run --rm -e INPUT_PARAM=$INPUT_PARAM -v ${{ github.workspace }}:/app fibonacci-app
+
