@@ -1,14 +1,7 @@
 FROM ubuntu:latest
 
-RUN apt-get update && \
-    apt-get install -y \
-    dpkg \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y make
 
-COPY fibonacci.deb /tmp/
+COPY ./path/to/fibonacci /usr/local/bin/fibonacci
 
-RUN dpkg -i /tmp/fibonacci.deb || apt-get -fy install
-
-WORKDIR /usr/local/bin
-
-CMD ["fibonacci", "10"]
+ENTRYPOINT ["fibonacci"]
