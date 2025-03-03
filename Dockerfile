@@ -1,14 +1,11 @@
 FROM ubuntu:latest
 
-RUN apt-get update && \
-    apt-get install -y \
-    dpkg \
-    && rm -rf /var/lib/apt/lists/*
+COPY . /laba3
 
-COPY fibonacci.deb /tmp/
+WORKDIR /laba3
 
-RUN dpkg -i /tmp/fibonacci.deb || apt-get -fy install
+RUN apt-get install -y make debhelper dpkg-dev libgtest-dev
 
-WORKDIR /usr/local/bin
+RUN dpkg -i /laba3/fibonacci.deb
 
-CMD ["fibonacci", "10"]
+CMD [ "/laba3/usr/fibonacci", "10" ]
