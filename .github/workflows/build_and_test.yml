@@ -57,8 +57,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ekaterinashliakhova/fibonacci:latest .
+          docker build -t fibonacci:latest .
 
       - name: Push Docker image
         run: |
-          docker push ekaterinashliakhova/fibonacci:latest
+          docker push fibonacci:latest
