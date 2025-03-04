@@ -17,7 +17,7 @@ OBJS_SRC = $(patsubst $(SRC_DIR)%.cpp, $(USR_DIR)%.o, $(SRCS_SRC))
 SRCS_TEST = $(wildcard $(CICD_DIR)*.cpp)
 OBJS_TEST = $(patsubst $(CICD_DIR)%.cpp, $(USR_DIR)%.o, $(SRCS_TEST))
 
-all: $(TARGET) $(TARGET_TEST)
+all: $(TARGET)
 
 $(TARGET): $(OBJS_SRC)
 	$(CXX) $(OBJS_SRC) -o $(USR_DIR)$(TARGET)
