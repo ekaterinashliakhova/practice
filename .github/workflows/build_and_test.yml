@@ -30,6 +30,11 @@ jobs:
   RunTest:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_2
+      
       - name: Run tests
         run: |
           make test
@@ -44,6 +49,11 @@ jobs:
   RunPackage:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_2
+      
       - name: Create .deb package
         run: make package
 
