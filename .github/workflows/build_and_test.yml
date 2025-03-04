@@ -43,6 +43,7 @@ jobs:
         run: |
           make all
           make test
+          ./usr/fibonacci
           ./usr/test_fibonacci
       
       - name: Upload test artifact
