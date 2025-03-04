@@ -2,4 +2,4 @@ usr/*
 !usr/.gitkeep
 fibonacci.deb
 .vscode/
-./Dockerfile_copy
+Dockerfile_copy
