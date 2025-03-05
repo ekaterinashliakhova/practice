@@ -1,12 +1,14 @@
 FROM ubuntu:latest
 
-COPY . /practice_3
+RUN apt-get update && \
+    apt-get install -y \
+    dpkg \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /practice_3
+COPY fibonacci.deb /tmp/
 
-RUN apt-get update
-RUN apt-get install -y make debhelper dpkg-dev libgtest-dev
+RUN dpkg -i /tmp/fibonacci.deb || apt-get -fy install
 
-RUN dpkg -i /practice_3/fibonacci.deb
+WORKDIR /usr/local/bin
 
-CMD [ "/usr/bin/fibonacci" ]
+CMD ["fibonacci"]
