@@ -10,4 +10,4 @@ RUN apt-get install -y make debhelper dpkg-dev libgtest-dev
 
 RUN dpkg -i /laba3/fibonacci.deb
 
-CMD [ "usr/test_fibonacci" ]
+CMD [ "test_fibonacci" ]
