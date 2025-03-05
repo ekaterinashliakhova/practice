@@ -15,7 +15,15 @@ jobs:
         with:
           ref: practice_3
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make debhelper dpkg-dev
+          sudo apt-get install -y libgtest-dev
+          sudo apt-get install -y cmake
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp *.a /usr/lib
       - name: Build project
         run: make all
       - name: Upload run artifact
@@ -33,7 +41,14 @@ jobs:
         with:
           ref: practice_3
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make libgtest-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make libgtest-dev
+          sudo apt-get install -y cmake
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp *.a /usr/lib
       - name: Run tests
         run: |
           make all
@@ -55,7 +70,9 @@ jobs:
         with:
           ref: practice_3
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make debhelper dpkg-dev
       - name: Create .deb package
         run: make package
       - name: Upload artifact
