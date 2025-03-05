@@ -1,12 +1,13 @@
 FROM ubuntu:latest
 
-COPY . /practice_3
+COPY . /laba3
 
-WORKDIR /practice_3
+WORKDIR /laba3
 
-RUN apt-get update
-RUN apt-get install -y make debhelper dpkg-dev libgtest-dev
+RUN apt-get update && apt-get install -y make debhelper dpkg-dev libgtest-dev
 
-RUN dpkg -i /practice_3/fibonacci.deb
+RUN make all 
 
-CMD [ "/usr/bin/fibonacci" ]
+RUN dpkg -i /laba3/fibonacci.deb
+
+CMD [ "/laba3/usr/test_fibonacci" ]
