@@ -2,44 +2,79 @@ name: Build and Test
 
 on:
   push:
-    branches: [practice_3]
+    branches: [practice_2]
   pull_request:
-    branches: [practice_3]
+    branches: [practice_2]
 
 jobs:
-  build-and-test:
+  RunMake:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_3  
-
+          ref: practice_2
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev libgtest-dev
+        run: sudo apt-get update && sudo apt-get install -y make
 
       - name: Build project
-        run: |
-          make all
+        run: make all
 
+      - name: Upload run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fibonacci_auto_executable
+          path: ./usr/fibonacci
+
+  RunTest:
+    runs-on: ubuntu-latest
+    needs: RunMake
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_2
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y make libgtest-dev
+  
       - name: Run tests
         run: |
+          make all
           make test
+          ./usr/fibonacci
           ./usr/test_fibonacci
+      
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fibonacci_test_executable
+          path: ./usr/test_fibonacci
+    
+  RunPackage:
+    needs: RunTest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_2
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev
 
       - name: Create .deb package
-        run: |
-          make package
+        run: make package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: fibonacci_deb_package
-          path: fibonacci.deb
+          path: ./fibonacci.deb
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: RunPackage
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
