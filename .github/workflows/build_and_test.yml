@@ -99,6 +99,9 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ekaterinashliakhova/fibonacci:latest .
+      - name: Run Docker container for testing
+        run: |
+          docker run --rm ekaterinashliakhova/fibonacci:latest ./usr/fibonacci
       - name: Push Docker image
         run: |
           docker push ekaterinashliakhova/fibonacci:latest
