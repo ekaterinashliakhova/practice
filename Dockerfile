@@ -1,13 +1,13 @@
 FROM ubuntu:latest
 
-COPY . /laba3
+RUN apt-get update && apt-get install -y \
+    g++ \
+    cmake
 
-WORKDIR /laba3
+COPY ./usr/fibonacci /usr/local/bin/fibonacci
 
-RUN apt-get update
+RUN chmod +x /usr/local/bin/fibonacci
 
-RUN apt-get install -y make debhelper dpkg-dev libgtest-dev
+WORKDIR /usr/local/bin
 
-RUN dpkg -i /laba3/fibonacci.deb
-
-CMD [ "test_fibonacci" ]
+CMD ["fibonacci"]
