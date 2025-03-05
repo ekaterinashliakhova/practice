@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [practice_2]
+    branches: [practice_3]
   pull_request:
-    branches: [practice_2]
+    branches: [practice_3]
 
 jobs:
   RunMake:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2
+          ref: practice_3
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y make
 
@@ -33,7 +33,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2
+          ref: practice_3
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y make libgtest-dev
@@ -58,7 +58,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2
+          ref: practice_3
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev
