@@ -1,40 +1,107 @@
 name: Build and Test
 
 on:
-  # Триггеры для запуска воркфлоу
   push:
-    branches: [practice_2]
+    branches: [practice_3]
   pull_request:
-    branches: [practice_2]
+    branches: [practice_3]
 
 jobs:
-  build-and-test:
+  RunMake:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: practice_2  # Указываем ветку practice_2
-
+          ref: practice_3
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y make debhelper dpkg-dev libgtest-dev
-
-      - name: Build project
         run: |
-          make all
+          sudo apt-get update
+          sudo apt-get install -y make debhelper dpkg-dev
+          sudo apt-get install -y libgtest-dev
+          sudo apt-get install -y cmake
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp lib/libgtest*.a /usr/lib/
+      - name: Build project
+        run: make all
+      - name: Upload run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fibonacci_auto_executable
+          path: ./usr/fibonacci
 
+  RunTest:
+    runs-on: ubuntu-latest
+    needs: RunMake
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make libgtest-dev
+          sudo apt-get install -y cmake
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp lib/libgtest*.a /usr/lib/
       - name: Run tests
         run: |
+          make all
           make test
+          ./usr/fibonacci
           ./usr/test_fibonacci
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fibonacci_test_executable
+          path: ./usr/test_fibonacci
 
-      - name: Create .deb package
+  RunPackage:
+    needs: RunTest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: practice_3
+      - name: Install dependencies
         run: |
-          make package
-
-      # Дополнительный шаг для публикации артефакта (.deb)
+          sudo apt-get update
+          sudo apt-get install -y make debhelper dpkg-dev
+      - name: Create .deb package
+        run: make package
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: fibonacci_deb_package
-          path: fibonacci.deb
+          path: ./fibonacci.deb
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: RunPackage
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fibonacci_deb_package
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: |
+          docker build -t ekaterinashliakhova/fibonacci:latest .
+      - name: Run Docker container for testing
+        run: |
+          docker run --rm ekaterinashliakhova/fibonacci:latest ./usr/fibonacci
+      - name: Push Docker image
+        run: |
+          docker push ekaterinashliakhova/fibonacci:latest
